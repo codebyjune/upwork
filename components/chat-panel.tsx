@@ -11,6 +11,12 @@ import {
 import { Send, Square } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Message,
+  MessageContent,
+  MessageGroup,
+} from "@/components/ui/message";
+import { Bubble, BubbleContent } from "@/components/ui/bubble";
 import { useChat as useAiChat, UIMessage } from "@ai-sdk/react";
 import { toast } from "sonner";
 
@@ -43,6 +49,36 @@ export function useChat() {
   const ctx = useContext(ChatContext);
   if (!ctx) throw new Error("useChat must be used within ChatProvider");
   return ctx;
+}
+
+function ChatMessages({ messages }: { messages: UIMessage[] }) {
+  return (
+    <MessageGroup>
+      {messages.map((message) => {
+        const isUser = message.role === "user";
+        return (
+          <Message key={message.id} align={isUser ? "end" : "start"}>
+            <MessageContent>
+              {message.parts.map((part, i) => {
+                if (part.type !== "text") return null;
+                return (
+                  <Bubble
+                    key={`${message.id}-${i}`}
+                    align={isUser ? "end" : "start"}
+                    variant={isUser ? "default" : "muted"}
+                  >
+                    <BubbleContent className="whitespace-pre-wrap">
+                      {part.text}
+                    </BubbleContent>
+                  </Bubble>
+                );
+              })}
+            </MessageContent>
+          </Message>
+        );
+      })}
+    </MessageGroup>
+  );
 }
 
 export function ChatPanel() {
@@ -186,17 +222,7 @@ export function ChatPanel() {
       <div className="flex h-svh w-full flex-col pt-14">
         <div className="flex-1 overflow-y-auto px-4 pt-6">
           <div className="mx-auto max-w-2xl">
-            {messages.map((message) => (
-              <div key={message.id} className="whitespace-pre-wrap">
-                {message.role === "user" ? "User: " : "AI: "}
-                {message.parts.map((part, i) => {
-                  switch (part.type) {
-                    case "text":
-                      return <div key={`${message.id}-${i}`}>{part.text}</div>;
-                  }
-                })}
-              </div>
-            ))}
+            <ChatMessages messages={messages} />
           </div>
         </div>
 
@@ -244,21 +270,11 @@ export function ChatPanel() {
         <div className="mx-auto max-w-3xl mt-20">
           <h2 className="mb-2 text-xl font-semibold">对话 {activeId}</h2>
           <div>
-            {messages.map((message) => (
-              <div key={message.id} className="whitespace-pre-wrap">
-                {message.role === "user" ? "User: " : "AI: "}
-                {message.parts.map((part, i) => {
-                  switch (part.type) {
-                    case "text":
-                      return <div key={`${message.id}-${i}`}>{part.text}</div>;
-                  }
-                })}
-              </div>
-            ))}
+            <ChatMessages messages={messages} />
+            {!messages.length && (
+              <p className="text-muted-foreground text-sm">开始聊天…</p>
+            )}
           </div>
-          {!messages.length && (
-            <p className="text-muted-foreground text-sm">开始聊天…</p>
-          )}
         </div>
       </div>
 
