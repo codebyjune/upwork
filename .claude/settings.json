@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(psql -U june -d upwork_dev -c \"\\\\dt\")",
+      "mcp__shadcn__get_project_registries",
+      "mcp__shadcn__list_items_in_registries",
+      "Bash(pnpm dlx *)"
+    ]
+  }
+}
