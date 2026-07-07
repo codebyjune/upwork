@@ -26,3 +26,30 @@ model Conversation {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model Attachment {
+  id             String   @id @default(cuid())
+  name           String
+  size           Int
+  type           String
+  url            String
+  createdAt      DateTime @default(now())
+  parseStatus    String?
+  parsedText     String?
+  parsedMarkdown String?
+  parseError     String?
+  chunks         Json?
+  chunkEmbeddings Chunk[]
+}
+
+model Chunk {
+  id           String   @id @default(cuid())
+  attachmentId String
+  attachment   Attachment @relation(fields: [attachmentId], references: [id], onDelete: Cascade)
+  index        Int
+  content      String
+  embedding    Unsupported("vector(1024)")
+  createdAt    DateTime @default(now())
+
+  @@index([attachmentId])
+}

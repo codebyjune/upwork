@@ -1,6 +1,7 @@
 "use client";
 
-import { Plus, MessageSquare } from "lucide-react";
+import { Plus, MessageSquare, Upload } from "lucide-react";
+import Link from "next/link";
 import {
   Sidebar,
   SidebarContent,
@@ -56,6 +57,16 @@ export function ChatSidebar() {
         >
           <Plus className="h-4 w-4" />
           <span>新对话</span>
+        </Button>
+        <Button
+          variant="outline"
+          className="w-full justify-start gap-2"
+          asChild
+        >
+          <Link href="/upload">
+            <Upload className="h-4 w-4" />
+            <span>上传附件</span>
+          </Link>
         </Button>
       </SidebarHeader>
 
